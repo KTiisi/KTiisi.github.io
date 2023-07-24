@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map</title>
+    <!-- 引入 Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <!-- 引入 MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css"/>
+
+    <!-- 引入 Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <style>
+        #lmap {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="lmap"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<script>
+    // 設定地圖中心點與放大級別
+    var LMap = L.map(document.getElementById('lmap'), {
+        center: [23.5, 121],
+        zoom: 7,
+		minZoom: 5, // 設定最小縮放倍率
+        //maxZoom: 12 // 設定最大縮放倍率
+        //crs: L.CRS.EPSG3857,
+    });
+
+    // 載入圖資
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>         contributors'
+    }).addTo(LMap);
+
+    // 模擬資料
+    function random(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    function CreatePoint(count) { // count為產生的點數量
+        let arr = [];
+        for (let i = 0; i < count; i++) {
+            let longitude = random(120.5, 121.4); // 經度介於120.5~121.4
+            let latitude = random(23, 24.6); // 緯度介於23~24.6
+
+            arr.push({x: longitude, y: latitude});
+        }
+        return arr;
+    }
+
+    var arr = CreatePoint(1500);
+    console.log(arr);
+
+    // 創建 MarkerClusterGroup
+    var markers = L.markerClusterGroup();
+    arr.map(item => L.marker(new L.LatLng(item.y, item.x))
+        .bindPopup(`<p>經度: ${item.x}</p><p>緯度: ${item.y}</p>`))
+        .forEach(item => markers.addLayer(item));
+
+    LMap.addLayer(markers);
+</script>
+</body>
+</html>
